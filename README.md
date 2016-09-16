@@ -12,3 +12,7 @@ We have one script that converts ascii tables to pickled dictionaries (txt2array
 We then have interchangable scripts that each must pick up the pickled dictionary, format the data as needed, and train a machine learning algorithm (provided within scikit-learn) based on the data. These scripts must pickle the *trained* object into a file.
 
 Because all scikit-learn objects will have a "predict" method, we standardize the actual evaluation in a single script (predict.py) that picks up the pickled scikit-learn objects and evaluates the functions at a common set of points for all algorithms. This should be able to take multiple trained objects (ie: multiple files) and evaluate them all at the same points. Then, it should plot or summarize or report the results in some standardized way (eg: overlayed plots).
+
+------------------
+
+For our training data, we want to fit 'BSN' using all the other keys (eg: 'BCI').
