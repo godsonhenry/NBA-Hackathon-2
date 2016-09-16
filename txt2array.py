@@ -26,6 +26,7 @@ if __name__=='__main__':
 	text_openfile = open(text_file,'rt')
 	text_list = text_openfile.readlines()
 	headers = np.array(text_list[0].split()[1:])
+	text_openfile.close()
 	
 	#Build dictionary
 	dic = {}
