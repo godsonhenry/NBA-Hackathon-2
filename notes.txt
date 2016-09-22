@@ -1,0 +1,68 @@
+------------------- STATS USEFUL FOR PLAYER CLASSIFICATION ----------------------------
+
+implicitly assume that the attributes for which one set is "good" are the ones for which the other set is "bad"
+
+traits for guards/smalls
+  - 3pt stats
+  - assists stats
+  - turnovers (maybe?)
+  - height and weight
+  - fast break points (if available)
+  - ball handler (if available)
+
+traits for bigs
+  - height and weight
+  - rebounding
+  - blocks
+  - points in the paint (if available)
+  - screen assists <-- very useful if available
+  - contested 2pt shots
+  - field goal precentage at the rim
+
+possible traits for "specialty players"
+  - 3pts?
+  - low usage stats?
+  - minutes played? <-- good for excluding outliers?
+
+We attempt unsupervised classification/clustering and can try several known numbers of categories as well as things like Dirichlet Process Gaussian Mixture Models.
+We should whiten all statistics before classification (zero the mean and divide by standard deviation? possibly inter-quartile range? or just map -> [0,1) ).
+WE WANT WHITENING TO BE INCLUDED IN OUR PIPELINE so that they can just do a database query of some kind and pipe the result into our code.
+
+-------------------- DIVISION OF LABOR -------------------------------
+
+Data
+  - how do we get it? (data discovery)
+      -> if this is a database, we sick Scott on it
+
+  - what do we want? (feature selection)
+      -> Alvaro will try to do this
+
+  - formatting so we can use it
+      -> Scott will probably lead this
+
+Analysis
+  - gaussian mixture models and/or k-means (unsupervised classification)
+      -> Reed will lead this, with help from Ryan
+      -> we may need to experiment with how many classes and which statistics separate them well...
+
+  - supervised learning for correlations between types of players
+      -> Ryan will lead this, and can try several classifiers specified in scikit_learn (start with random forests)
+      -> this should only require some sort of "classified" set of players. classifications can either come from the mixture model or from human input (if the mixture model fails). This ties into feature selection, for which we have several ideas.
+      -> pass (large) feature vectors for each player as well as boolean arrays that downselect this to "important" features for each input to the CostFunction. We may want to consider further pre-conditioning by "zero-ing" certain features for certain "types" of players, with input/feedback from the mixture model. This may be subtle, though. At the least, we MUST order the players by their association with each type (eg, the *most* type 1 player goes first, etc). We also want to check the construction of these preconditioned vectors to make sure they make sense (eg, is the *most* type 1 player actually more likely to be type 1 than type 2, etc)
+
+------------------------ TECHNICAL SPECIFICATIONS ---------------------
+
+DATA for unsupervised classification
+ - ASCII file with first line as column headers. Each row is then a single player following the structure:
+
+    player name | ID | indiv player statistics (chosen by Alvaro)
+
+ - NOTE: the ID should be redundant with the row in the file to speed up lookup. We just write a parser that maps this into an array and then reference it when performing the supervised learning for combinations of players
+
+classification outputs the same data, but appends the "distance from each class" as a column for each class, as well as a column that contains the "most likely class"
+
+DATA for supervised learning
+ - ASCII file containing combinations of players (given by the ID number for fast lookup) and the important team statistics (used to build a cost function). First line should be column headers.
+ - At runtime, the routine reads in both the training set and classification input/output. It then uses the player ID to quickly look-up single player stats and map them into vectorized input for the actual training. Applies boolean arrays and pre-conditioning, etc etc.
+
+BOTH unsupervised classification and supervised learning need to have command-line options that specify which features are actually going to be used. Thus, we have to produce only one set of input files and the code should down-select automatically, excluding unwanted variables before training.
