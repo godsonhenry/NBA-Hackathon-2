@@ -1,0 +1,43 @@
+Notes and description of project for 2016 NBA Hackathon
+
+#------------------------
+
+unsupervised clustering/catagorization
+    sklearn.mixture.GMM.GMM(n_components=1, covariance_type='diag', random_state=None, thresh=None, tol=0.001, min_covar=0.001, n_iter=100, n_init=1, params='wmc', init_params='wmc', verbose=0)
+    sklearn.cluster.KMeans.KMeans(n_clusters=8, init='k-means++', n_init=10, max_iter=300, tol=0.0001, precompute_distances='auto', verbose=0, random_state=None, copy_x=True, n_jobs=1)
+
+supervised regression
+    sklearn.ensemble.RandomForestRegressor(n_estimators=10, criterion='mse', max_depth=None, min_samples_split=2, min_samples_leaf=1, min_weight_fraction_leaf=0.0, max_features='auto', max_leaf_nodes=None, bootstrap=True, oob_score=False, n_jobs=1, random_state=None, verbose=0, warm_start=False)
+    sklearn.ensemble.ExtraTreesRegressor(n_estimators=10, criterion='mse', max_depth=None, min_samples_split=2, min_samples_leaf=1, min_weight_fraction_leaf=0.0, max_features='auto', max_leaf_nodes=None, bootstrap=False, oob_score=False, n_jobs=1, random_state=None, verbose=0, warm_start=False)
+    sklearn.ensemble.AdaBoostRegressor(base_estimator=None, n_estimators=50, learning_rate=1.0, loss='linear', random_state=None)
+
+    sklearn.svm.SVR(kernel='rbf', degree=3, gamma='auto', coef0=0.0, tol=0.001, C=1.0, epsilon=0.1, shrinking=True, cache_size=200, verbose=False, max_iter=-1)
+    sklearn.svm.NuSVR(nu=0.5, C=1.0, kernel='rbf', degree=3, gamma='auto', coef0=0.0, shrinking=True, tol=0.001, cache_size=200, verbose=False, max_iter=-1)
+
+data representation and visualization
+    corner.corner
+    hand-written equivalent?
+
+#------------------------
+
+unsupervised classification:
+    vectorized input from Alavaro -> simply dump into clustering algorithms
+        -> look at corner plots by eye (number of classes) via corner plots
+        -> write randomized kernal start locations, testing/validation of clustering (using BIC?)
+    output vectors with additional columns: 
+        -> most-likely class
+        -> probability of belonging to each class (if available: GMM)
+
+supervised regression:
+    need mapping routine between groups of 5 players and vectorized input
+        -> make this modular and easily separable
+    cross validation and error analysis for each classifier
+        -> perform a grid search over input options to maximize performance
+
+#------------------------
+
+data standards
+    pkl files 
+        -> dictionary with two keys: 
+            - 'data'
+            - 'headers'
